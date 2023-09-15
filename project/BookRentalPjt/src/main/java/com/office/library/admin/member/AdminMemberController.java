@@ -1,5 +1,7 @@
 package com.office.library.admin.member;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/admin/member")
@@ -24,7 +28,8 @@ public class AdminMemberController {
 		return nextPage;
 	}
 
-	//@RequestMapping(value = "/createAccountConfirm", method = RequestMethod.POST) // 생략하면안됨 post메서드와 get메서드를 구분해야함
+	// @RequestMapping(value = "/createAccountConfirm", method = RequestMethod.POST)
+	// // 생략하면안됨 post메서드와 get메서드를 구분해야함
 	// post 요청 받아서 사용할 때는 @PostMapping("/createAccountConfirm")이렇게 해줘도됨
 	// get은GetMapping 써주면됨
 	@PostMapping("/createAccountConfirm")
@@ -37,13 +42,13 @@ public class AdminMemberController {
 
 		String nextPage = "admin/member/create_account_ok";// 초기값을 성공했을때의 페이지 주소를 적어주자
 		// 정상적으로 처리됐다면 초기값인 성공페이지가 뜨게됨
-		
+
 		int result = adminMemberService.createAccountConfirm(adminMemberVO);// createAccountConfirm의 자료형이 int니까 int로 넣어줌
 
 		if (result <= 0) {// 결과를 받아올거기 때문에 그 결과를 정상적으로 받아왔는지 못햇는지 판별을해줌
 			nextPage = "admin/member/create_account_ng";
-	    }
-	    return nextPage;
+		}
+		return nextPage;
 	}
 
 	@GetMapping("/loginForm")
@@ -67,21 +72,48 @@ public class AdminMemberController {
 		// adminMemberService가 가지고 있는 로그인컨펌메서드실행
 		if (loginedAdminMemberVO == null) {
 			nextPage = "admin/member/login_ng";
-		}else {
+		} else {
 			session.setAttribute("loginedAdminMemberVO", loginedAdminMemberVO);
-			//loginedAdminMemberVO에 int가 들어가든 string이 들어가든 상관없은 개발자맘임
-			session.setMaxInactiveInterval(60*30);//초단위로 계산함
+			// loginedAdminMemberVO에 int가 들어가든 string이 들어가든 상관없은 개발자맘임
+			session.setMaxInactiveInterval(60 * 30);// 초단위로 계산함
 		}
 		return nextPage;
 	}
-	
-	@GetMapping("/logoutConfirm")//어차피 겟요청으로 올테니까? 뭐가..? 겟매핑해줌
+
+	@GetMapping("/logoutConfirm") // 어차피 겟요청으로 올테니까? 뭐가..? 겟매핑해줌
 	public String logoutConfirm(HttpSession session) {
 		System.out.println("[AdminMemberController] logoutConfirm()");
-		String nextPage = "redirect:/admin";//로그아웃이되면 이동할 페이지 : 관리자페이지
-		
-		session.invalidate();//세션에 들어가있는 정보가 초기화됨;
-		
+		String nextPage = "redirect:/admin";// 로그아웃이되면 이동할 페이지 : 관리자페이지
+
+		session.invalidate();// 세션에 들어가있는 정보가 초기화됨;
+
 		return nextPage;
 	}
+
+	// 관리자 목록
+	@GetMapping("/listupAdmin")
+	public ModelAndView listupAdmin() {
+		System.out.println("[AdminMemberController] listupAdmin()");
+
+		String nextPage = "admin/member/listup_admins";
+
+		List<AdminMemberVO> adminMemberVOs = adminMemberService.listupAdmin();
+
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("adminMemberVOs", adminMemberVOs);
+		modelAndView.setViewName(nextPage);
+		return modelAndView;
+	}
+
+	@GetMapping("/setAdminApproval")
+	public String setAdminApproval(@RequestParam("a_m_no") int a_m_no) {
+		System.out.println("[AdminMemberController] setAdminApproval()");
+
+		String nextPage = "redirect:/admin/member/listupAdmin";//리턴할페이지문자열 jsp view페이지로 가는게아니라 리디렉트로 다시실행? 하는거라서 메소드 호출을 하는것
+		//승인해준다음에 다시 원래페이지(관리자목록)으로 돌아가게함 : 승인이 잘 됐는지 확인을 해야하니까
+
+		adminMemberService.setAdminApproval(a_m_no);
+		return nextPage;
+	}
+
 }

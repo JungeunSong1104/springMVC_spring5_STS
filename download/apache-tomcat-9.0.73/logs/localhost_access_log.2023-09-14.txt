@@ -173,3 +173,5 @@
 0:0:0:0:0:0:0:1 - - [14/Sep/2023:14:45:33 +0900] "GET /library/admin/member/logoutConfirm HTTP/1.1" 302 -
 0:0:0:0:0:0:0:1 - - [14/Sep/2023:14:45:33 +0900] "GET /library/admin HTTP/1.1" 200 2879
 0:0:0:0:0:0:0:1 - - [14/Sep/2023:14:45:33 +0900] "GET /library/resources/css/admin/home.css HTTP/1.1" 200 109
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:16:05:12 +0900] "GET /library/admin/ HTTP/1.1" 200 2829
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:16:07:11 +0900] "GET /library/admin/home HTTP/1.1" 404 721

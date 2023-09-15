@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+		<!-- 데이터가 비어있는 것들 어떻게 처리할지 지정해주는 것 
+		만약 타입이 널로 되어있는데 이런 설정을 안하면 에러발생하는 경우가 이음
+		에러방지용 -->
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.kh.quiz.QuizDO" alias="Quiz" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="/quiz-mapper.xml" />
+	</mappers>
+</configuration>
