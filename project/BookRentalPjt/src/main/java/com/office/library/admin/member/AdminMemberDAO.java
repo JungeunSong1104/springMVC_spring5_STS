@@ -104,7 +104,6 @@ public class AdminMemberDAO {// 여기서는 마리아디비를 사용할거임
 				@Override
 				public AdminMemberVO mapRow(ResultSet rs, int rowNum) throws SQLException {
 					AdminMemberVO adminMemberVO = new AdminMemberVO();
-
 					adminMemberVO.setA_m_no(rs.getInt("a_m_no"));
 					adminMemberVO.setA_m_approval(rs.getInt("a_m_approval"));
 					adminMemberVO.setA_m_id(rs.getString("a_m_id"));
@@ -167,17 +166,121 @@ public class AdminMemberDAO {// 여기서는 마리아디비를 사용할거임
 		return adminMemberVOs;
 	}
 
+	// 관리자 승인처리를 위한 sql문
 	public int updateAdminAccount(int a_m_no) {
-		System.out.println("[AdminMemberDAO updateAdminAccount()]");
-		String sql = "UPDATE tbl_admin_member SET "
-						+ "a_m_approval = 1 "
-						+ "WHERE a_m_no = ?";
+		System.out.println("[AdminMemberDAO] updateAdminAccount()");
+
+		String sql = "UPDATE tbl_admin_member SET " + "a_m_approval = 1 " + "WHERE a_m_no = ?";
 
 		int result = -1;
 
 		try {
 			result = jdbcTemplate.update(sql, a_m_no);
-		}catch(Exception e) {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	// 계정 수정
+	public int updateAdminAccount(AdminMemberVO adminMemberVO) {
+		System.out.println("[AdminMemberDAO] updateAdminAccount()");
+
+		String sql = "UPDATE tbl_admin_member SET " + "a_m_name = ?, " + "a_m_gender = ?, " + "a_m_part = ?, "
+				+ "a_m_position = ?, " + "a_m_mail = ?, " + "a_m_phone = ?," + "a_m_mod_date = NOW() "
+				+ "WHERE a_m_no = ?";
+
+		int result = -1;
+		try {
+			result = jdbcTemplate.update(sql, adminMemberVO.getA_m_name(), adminMemberVO.getA_m_gender(),
+					adminMemberVO.getA_m_part(), adminMemberVO.getA_m_position(), adminMemberVO.getA_m_mail(),
+					adminMemberVO.getA_m_phone(), adminMemberVO.getA_m_no());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	// 지정된 한 회원만 조회하기
+	public AdminMemberVO selectAdmin(int a_m_no) {// 여기에 전달되는 a_m_no는 관리자 최신 정보를 조회하기 위해서 관리자 번호만을 매개변수로 받음
+		System.out.println("[AdminMemberDAO] selectAdmin()");
+		String sql = "SELECT* FROM tbl_admin_member " + "WHERE a_m_no = ?";// 지정된 하나의 회원만 가져옴
+
+		List<AdminMemberVO> adminMemberVOs = new ArrayList<AdminMemberVO>();
+		try {
+			adminMemberVOs = jdbcTemplate.query(sql, new RowMapper<AdminMemberVO>() {
+				@Override
+				public AdminMemberVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AdminMemberVO adminMemberVO = new AdminMemberVO();
+
+					adminMemberVO.setA_m_no(rs.getInt("a_m_no"));
+					adminMemberVO.setA_m_approval(rs.getInt("a_m_approval"));
+					adminMemberVO.setA_m_id(rs.getString("a_m_id"));
+					adminMemberVO.setA_m_pw(rs.getString("a_m_pw"));
+					adminMemberVO.setA_m_name(rs.getString("a_m_name"));
+					adminMemberVO.setA_m_gender(rs.getString("a_m_gender"));
+					adminMemberVO.setA_m_part(rs.getString("a_m_part"));
+					adminMemberVO.setA_m_position(rs.getString("a_m_position"));
+					adminMemberVO.setA_m_mail(rs.getString("a_m_mail"));
+					adminMemberVO.setA_m_phone(rs.getString("a_m_phone"));
+					adminMemberVO.setA_m_reg_date(rs.getString("a_m_reg_date"));
+					adminMemberVO.setA_m_mod_date(rs.getString("a_m_mod_date"));
+
+					return adminMemberVO;
+				}
+			}, a_m_no);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return adminMemberVOs.size() > 0 ? adminMemberVOs.get(0) : null;
+	}
+
+	public AdminMemberVO selectAdmin(String a_m_id, String a_m_name, String a_m_mail) {
+		System.out.println("[AdminMemberDAO] selectAdmin()");
+
+		String sql = "SELECT * FROM tbl_admin_member " + "WHERE a_m_id = ? AND a_m_name = ? AND a_m_mail = ?";
+
+		List<AdminMemberVO> adminMemberVOs = new ArrayList<AdminMemberVO>();
+		try {
+			adminMemberVOs = jdbcTemplate.query(sql, new RowMapper<AdminMemberVO>() {
+				@Override
+				public AdminMemberVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AdminMemberVO adminMemberVO = new AdminMemberVO();
+
+					adminMemberVO.setA_m_no(rs.getInt("a_m_no"));
+					adminMemberVO.setA_m_id(rs.getString("a_m_id"));
+					adminMemberVO.setA_m_pw(rs.getString("a_m_pw"));
+					adminMemberVO.setA_m_name(rs.getString("a_m_name"));
+					adminMemberVO.setA_m_gender(rs.getString("a_m_gender"));
+					adminMemberVO.setA_m_part(rs.getString("a_m_part"));
+					adminMemberVO.setA_m_position(rs.getString("a_m_position"));
+					adminMemberVO.setA_m_mail(rs.getString("a_m_mail"));
+					adminMemberVO.setA_m_phone(rs.getString("a_m_phone"));
+					adminMemberVO.setA_m_reg_date(rs.getString("a_m_reg_date"));
+					adminMemberVO.setA_m_mod_date(rs.getString("a_m_mod_date"));
+
+					return adminMemberVO;
+				}
+			}, a_m_id, a_m_name, a_m_mail);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return adminMemberVOs.size() > 0 ? adminMemberVOs.get(0) : null;
+		// 사이즈르 측정했는데 양수면 첫번째 객체를 돌려주고 0이거나 0보다 작으면 null값 리턴
+	}
+
+	public int updatePassword(String a_m_id, String newPassword) {
+		System.out.println("[AdminMemberDAO] updatePassword()");
+		String sql = "UPDATE tbl_admin_member SET "
+				+ "a_m_pw = ?, a_m_mod_date  = NOW() "
+				+ "WHERE a_m_id = ?";
+
+		int result = -1;
+
+		try {
+			result = jdbcTemplate.update(sql, passwordEncoder.encode(newPassword), a_m_id);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
