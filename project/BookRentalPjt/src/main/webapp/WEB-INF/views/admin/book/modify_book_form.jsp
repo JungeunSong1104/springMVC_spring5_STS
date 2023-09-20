@@ -19,6 +19,7 @@
 			</div>
 			<div class="modify_book_form">
 				<form action="<c:url value='/book/admin/modifyBookConfirm' />" name="modify_book_form" method="post" enctype="multipart/form-data">
+				<!-- onClick을 통해서 book/admin/modifyBookConfirm가 실행되는것 modifyBookFormd에 의해서 actiont이 실행됨..?-->
 					<input type="hidden" name="b_no" value="${bookVO.b_no}">
 					<input type="text" name="b_name" value="${bookVO.b_name}" placeholder="INPUT BOOK NAME."> <br>
 					<input type="text" name="b_author" value="${bookVO.b_author}" placeholder="INPUT BOOK AUTHOR."> <br>

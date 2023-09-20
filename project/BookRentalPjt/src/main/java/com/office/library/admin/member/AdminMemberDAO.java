@@ -272,9 +272,7 @@ public class AdminMemberDAO {// 여기서는 마리아디비를 사용할거임
 
 	public int updatePassword(String a_m_id, String newPassword) {
 		System.out.println("[AdminMemberDAO] updatePassword()");
-		String sql = "UPDATE tbl_admin_member SET "
-				+ "a_m_pw = ?, a_m_mod_date  = NOW() "
-				+ "WHERE a_m_id = ?";
+		String sql = "UPDATE tbl_admin_member SET " + "a_m_pw = ?, a_m_mod_date  = NOW() " + "WHERE a_m_id = ?";
 
 		int result = -1;
 
@@ -285,4 +283,6 @@ public class AdminMemberDAO {// 여기서는 마리아디비를 사용할거임
 		}
 		return result;
 	}
+
+
 }

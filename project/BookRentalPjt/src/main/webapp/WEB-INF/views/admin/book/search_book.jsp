@@ -30,7 +30,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="item" items="${bookVos}">
+						<c:forEach var="item" items="${bookVOs}">
 							<tr>
 								<td>
 								<c:url value='/book/admin/bookDetail' var='detail_url'>
